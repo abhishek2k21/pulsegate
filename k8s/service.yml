@@ -1,0 +1,16 @@
+﻿apiVersion: v1
+kind: Service
+metadata:
+  name: pulsegate-svc
+  namespace: pulsegate
+  labels:
+    app: pulsegate
+spec:
+  selector:
+    app: pulsegate
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+      protocol: TCP
+  type: ClusterIP
