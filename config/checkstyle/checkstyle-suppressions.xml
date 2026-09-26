@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suppressions PUBLIC
+    "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+    "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+
+<suppressions>
+  <!-- Test files: allow longer methods and more parameters for test setup -->
+  <suppress checks="MethodLength"      files="Test\.java$"/>
+  <suppress checks="ParameterNumber"   files="Test\.java$"/>
+  <suppress checks="MissingJavadocType" files="Test\.java$"/>
+  <suppress checks="CyclomaticComplexity" files="Test\.java$"/>
+
+  <!-- Generated code -->
+  <suppress checks=".*" files="[\\/]generated[\\/]"/>
+
+  <!-- Model classes: allow multiple variable declarations in builders -->
+  <suppress checks="MultipleVariableDeclarations" files="model[\\/].*\.java"/>
+</suppressions>

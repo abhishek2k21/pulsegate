@@ -1,0 +1,18 @@
+﻿# Normalize line endings to LF in Git
+* text=auto eol=lf
+
+# Binary files — no line ending normalization
+*.png  binary
+*.jpg  binary
+*.gif  binary
+*.ico  binary
+*.jar  binary
+*.zip  binary
+*.war  binary
+
+# Force LF for shell scripts
+*.sh   text eol=lf
+mvnw   text eol=lf
+
+# Treat JSON as text
+*.json text
