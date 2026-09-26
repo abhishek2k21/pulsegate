@@ -1,0 +1,90 @@
+﻿{
+  "title": "PulseGate — API Gateway Dashboard",
+  "uid": "pulsegate-main",
+  "schemaVersion": 38,
+  "refresh": "5s",
+  "time": { "from": "now-15m", "to": "now" },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Request Rate (req/s)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+      "targets": [{
+        "expr": "rate(pulsegate_requests_total[1m])",
+        "legendFormat": "{{route}} - {{status}}"
+      }]
+    },
+    {
+      "id": 2,
+      "title": "p95 Request Latency (ms)",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+      "targets": [{
+        "expr": "histogram_quantile(0.95, rate(pulsegate_request_duration_seconds_bucket[1m])) * 1000",
+        "legendFormat": "p95 {{route}}"
+      }]
+    },
+    {
+      "id": 3,
+      "title": "Rate Limit Denials (req/s)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 8, "w": 8, "h": 8 },
+      "targets": [{
+        "expr": "rate(pulsegate_ratelimit_requests_total{allowed=\"false\"}[1m])",
+        "legendFormat": "Denied - {{algorithm}}"
+      }]
+    },
+    {
+      "id": 4,
+      "title": "Circuit Breaker States",
+      "type": "stat",
+      "gridPos": { "x": 8, "y": 8, "w": 8, "h": 8 },
+      "targets": [{
+        "expr": "pulsegate_circuitbreaker_state",
+        "legendFormat": "{{name}}"
+      }],
+      "options": {
+        "colorMode": "background",
+        "mappings": [
+          { "type": "value", "options": { "0": { "text": "CLOSED", "color": "green" } } },
+          { "type": "value", "options": { "1": { "text": "HALF_OPEN", "color": "yellow" } } },
+          { "type": "value", "options": { "2": { "text": "OPEN", "color": "red" } } }
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "title": "Circuit Breaker Transitions",
+      "type": "timeseries",
+      "gridPos": { "x": 16, "y": 8, "w": 8, "h": 8 },
+      "targets": [{
+        "expr": "rate(pulsegate_circuitbreaker_transitions_total[5m])",
+        "legendFormat": "{{name}} {{from}}→{{to}}"
+      }]
+    },
+    {
+      "id": 6,
+      "title": "Error Rate % per Route",
+      "type": "gauge",
+      "gridPos": { "x": 0, "y": 16, "w": 12, "h": 8 },
+      "targets": [{
+        "expr": "100 * rate(pulsegate_requests_total{status=~\"5..\"}[5m]) / rate(pulsegate_requests_total[5m])",
+        "legendFormat": "{{route}}"
+      }]
+    },
+    {
+      "id": 7,
+      "title": "JVM Heap Usage (MB)",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 16, "w": 12, "h": 8 },
+      "targets": [{
+        "expr": "jvm_memory_used_bytes{area=\"heap\"} / 1024 / 1024",
+        "legendFormat": "Heap Used (MB)"
+      }, {
+        "expr": "jvm_memory_max_bytes{area=\"heap\"} / 1024 / 1024",
+        "legendFormat": "Heap Max (MB)"
+      }]
+    }
+  ]
+}
