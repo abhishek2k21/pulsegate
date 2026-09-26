@@ -1,4 +1,4 @@
-﻿package com.pulsegate.config;
+package com.pulsegate.config;
 
 import com.pulsegate.websocket.CircuitBreakerLiveHandler;
 import lombok.RequiredArgsConstructor;

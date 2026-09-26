@@ -1,4 +1,4 @@
-﻿package com.pulsegate.gateway.filter;
+package com.pulsegate.gateway.filter;
 
 import com.pulsegate.gateway.router.RouteCache;
 import com.pulsegate.model.Route;

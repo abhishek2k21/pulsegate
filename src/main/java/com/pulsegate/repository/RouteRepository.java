@@ -1,4 +1,4 @@
-﻿package com.pulsegate.repository;
+package com.pulsegate.repository;
 
 import com.pulsegate.model.Route;
 import org.springframework.data.r2dbc.repository.Query;

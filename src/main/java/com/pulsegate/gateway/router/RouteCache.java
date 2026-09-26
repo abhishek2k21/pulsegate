@@ -1,4 +1,4 @@
-﻿package com.pulsegate.gateway.router;
+package com.pulsegate.gateway.router;
 
 import com.pulsegate.model.Route;
 import com.pulsegate.repository.RouteRepository;
@@ -75,7 +75,7 @@ public class RouteCache {
     }
 
     /** Periodic full reload as a safety net for missed invalidation events. */
-    @Scheduled(fixedRateString = "\")
+    @Scheduled(fixedRateString = "${pulsegate.cache.reload-interval-ms:300000}")
     public void periodicReload() {
         log.debug("Periodic route cache reload started");
         loadAllRoutes();

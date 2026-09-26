@@ -1,4 +1,4 @@
-﻿package com.pulsegate.circuitbreaker;
+package com.pulsegate.circuitbreaker;
 
 import com.pulsegate.model.CircuitBreakerConfig;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -55,6 +55,7 @@ public class CircuitBreaker {
 
     /** Count of probe calls allowed in HALF_OPEN state. */
     private final AtomicInteger halfOpenCallCount = new AtomicInteger(0);
+    private final AtomicInteger halfOpenSuccessCount = new AtomicInteger(0);
 
     public CircuitBreaker(String name, CircuitBreakerConfig config,
                           ReactiveRedisTemplate<String, String> redisTemplate,
@@ -113,7 +114,7 @@ public class CircuitBreaker {
         if (!success) {
             log.info("CircuitBreaker [{}] HALF_OPEN probe failed — reopening", name);
             transitionTo(CircuitBreakerState.OPEN);
-        } else if (halfOpenCallCount.get() >= config.getPermittedCallsInHalfOpen()) {
+        } else if (halfOpenSuccessCount.incrementAndGet() >= config.getPermittedCallsInHalfOpen()) {
             log.info("CircuitBreaker [{}] HALF_OPEN probes succeeded — closing", name);
             transitionTo(CircuitBreakerState.CLOSED);
         }
@@ -148,8 +149,10 @@ public class CircuitBreaker {
         } else if (newState == CircuitBreakerState.CLOSED) {
             callWindow.clear();
             halfOpenCallCount.set(0);
+            halfOpenSuccessCount.set(0);
         } else if (newState == CircuitBreakerState.HALF_OPEN) {
             halfOpenCallCount.set(0);
+            halfOpenSuccessCount.set(0);
         }
 
         // Persist to Redis for multi-node awareness

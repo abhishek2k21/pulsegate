@@ -1,4 +1,4 @@
-﻿package com.pulsegate.circuitbreaker;
+package com.pulsegate.circuitbreaker;
 
 import com.pulsegate.model.CircuitBreakerConfig;
 import io.micrometer.core.instrument.MeterRegistry;

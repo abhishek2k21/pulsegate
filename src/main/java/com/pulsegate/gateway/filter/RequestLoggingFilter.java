@@ -1,4 +1,4 @@
-﻿package com.pulsegate.gateway.filter;
+package com.pulsegate.gateway.filter;
 
 import com.pulsegate.analytics.AnalyticsProducer;
 import com.pulsegate.analytics.RequestEvent;

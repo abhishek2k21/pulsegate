@@ -1,0 +1,46 @@
+﻿# ============================================================
+# Development Profile — application-dev.yml
+# Active when: SPRING_PROFILES_ACTIVE=dev  OR  make run
+# Assumes: docker-deps running locally
+# ============================================================
+
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/pulsegate
+    username: pulsegate
+    password: pulsegate
+    pool:
+      initial-size: 2
+      max-size: 5
+
+  flyway:
+    url: jdbc:postgresql://localhost:5432/pulsegate
+    user: pulsegate
+    password: pulsegate
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
+pulsegate:
+  redis:
+    host: localhost
+    port: 6379
+
+logging:
+  level:
+    com.pulsegate: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+    io.lettuce: DEBUG   # Show Redis commands in dev
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%logger{30}) - %msg%n"
+
+management:
+  endpoint:
+    health:
+      show-details: always
+
+# Dev-only: relax security — no JWT required for admin endpoints
+spring.security.oauth2.resourceserver.jwt.jwk-set-uri: ""
+
+# Dev: faster cache reload for immediate feedback
+pulsegate.cache.reload-interval-ms: 10000

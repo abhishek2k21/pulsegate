@@ -1,4 +1,4 @@
-﻿package com.pulsegate.config;
+package com.pulsegate.config;
 
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.TimeoutOptions;
@@ -27,13 +27,13 @@ import java.time.Duration;
 @Configuration
 public class RedisConfig {
 
-    @Value("\")
+    @Value("${pulsegate.redis.host:localhost}")
     private String redisHost;
 
-    @Value("\")
+    @Value("${pulsegate.redis.port:6379}")
     private int redisPort;
 
-    @Value("\")
+    @Value("${pulsegate.redis.command-timeout-ms:500}")
     private long commandTimeoutMs;
 
     @Bean

@@ -1,4 +1,4 @@
-﻿package com.pulsegate.gateway.filter;
+package com.pulsegate.gateway.filter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -33,10 +33,12 @@ public class CorrelationIdFilter implements GatewayFilter {
 
         final String finalId = correlationId;
 
+        // Set response header so client receives the correlation ID
+        exchange.getResponse().getHeaders().set(CORRELATION_ID_HEADER, finalId);
+
         // Mutate request to add the header for upstream forwarding
         ServerWebExchange mutatedExchange = exchange.mutate()
             .request(r -> r.header(CORRELATION_ID_HEADER, finalId))
-            .response(r -> r.getHeaders().add(CORRELATION_ID_HEADER, finalId))
             .build();
 
         return chain.filter(mutatedExchange)

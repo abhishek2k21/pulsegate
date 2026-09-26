@@ -1,4 +1,4 @@
-﻿package com.pulsegate.ratelimit;
+package com.pulsegate.ratelimit;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

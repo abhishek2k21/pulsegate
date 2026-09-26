@@ -1,4 +1,4 @@
-﻿package com.pulsegate.circuitbreaker;
+package com.pulsegate.circuitbreaker;
 
 /**
  * States in the circuit breaker state machine.

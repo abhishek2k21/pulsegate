@@ -1,4 +1,4 @@
-﻿package com.pulsegate.analytics;
+package com.pulsegate.analytics;
 
 import lombok.Builder;
 import lombok.Data;

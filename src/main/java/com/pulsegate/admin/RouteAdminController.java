@@ -1,4 +1,4 @@
-﻿package com.pulsegate.admin;
+package com.pulsegate.admin;
 
 import com.pulsegate.gateway.router.RouteCache;
 import com.pulsegate.model.Route;
@@ -90,7 +90,7 @@ public class RouteAdminController {
         return routeRepository.findByRouteId(routeId)
             .switchIfEmpty(Mono.error(new RouteNotFoundException(routeId)))
             .flatMap(route -> routeRepository.delete(route))
-            .then(publishInvalidation(routeId))
+            .then(publishInvalidation(routeId).then())
             .doOnSuccess(v -> log.info("Route deleted: {}", routeId));
     }
 

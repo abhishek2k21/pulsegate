@@ -1,0 +1,70 @@
+﻿# ============================================================
+# Production Profile — application-prod.yml
+# All secrets via environment variables. No hardcoded values.
+# ============================================================
+
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT:5432}/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    pool:
+      initial-size: 10
+      max-size: 30
+      max-idle-time: 20m
+      validation-query: SELECT 1
+
+  flyway:
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT:5432}/${POSTGRES_DB}
+    user: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    # Production: validate-on-migrate to catch schema drift early
+    validate-on-migrate: true
+    out-of-order: false
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    producer:
+      acks: all            # Wait for all replicas to acknowledge (durability)
+      retries: 5
+    consumer:
+      auto-offset-reset: earliest
+      enable-auto-commit: false   # Manual commit for exactly-once semantics
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${JWT_JWKS_URI}
+
+pulsegate:
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT:6379}
+    command-timeout-ms: 300
+
+logging:
+  level:
+    root: WARN
+    com.pulsegate: INFO
+  pattern:
+    # JSON structured logging — compatible with CloudWatch, Datadog, ELK
+    console: '{"timestamp":"%d{ISO8601}","level":"%level","app":"pulsegate","host":"${HOSTNAME:-unknown}","correlationId":"%X{correlationId}","logger":"%logger{30}","message":"%msg","exception":"%ex{short}"}%n'
+
+management:
+  endpoint:
+    health:
+      show-details: never   # Don't expose internal details publicly
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus   # Minimal exposure in prod
+
+server:
+  port: 8080
+  # Production: graceful shutdown
+  shutdown: graceful
+
+spring.lifecycle.timeout-per-shutdown-phase: 30s
+
+pulsegate.cache.reload-interval-ms: 300000

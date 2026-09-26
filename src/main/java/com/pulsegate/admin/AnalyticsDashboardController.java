@@ -1,4 +1,4 @@
-﻿package com.pulsegate.admin;
+package com.pulsegate.admin;
 
 import com.pulsegate.analytics.AnalyticsAggregator;
 import io.swagger.v3.oas.annotations.Operation;

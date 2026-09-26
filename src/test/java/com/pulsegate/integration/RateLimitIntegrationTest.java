@@ -1,4 +1,4 @@
-﻿package com.pulsegate.integration;
+package com.pulsegate.integration;
 
 import com.pulsegate.model.RateLimitPolicy;
 import com.pulsegate.ratelimit.FixedWindowRateLimiter;

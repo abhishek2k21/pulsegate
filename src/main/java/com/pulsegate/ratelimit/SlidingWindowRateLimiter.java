@@ -1,4 +1,4 @@
-﻿package com.pulsegate.ratelimit;
+package com.pulsegate.ratelimit;
 
 import com.pulsegate.repository.RateLimitPolicyRepository;
 import io.micrometer.core.instrument.MeterRegistry;

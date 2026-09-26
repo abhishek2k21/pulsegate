@@ -1,4 +1,4 @@
-﻿package com.pulsegate.analytics;
+package com.pulsegate.analytics;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

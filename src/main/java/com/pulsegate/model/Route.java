@@ -1,4 +1,4 @@
-﻿package com.pulsegate.model;
+package com.pulsegate.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

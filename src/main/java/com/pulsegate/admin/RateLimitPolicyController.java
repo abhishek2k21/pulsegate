@@ -1,4 +1,4 @@
-﻿package com.pulsegate.admin;
+package com.pulsegate.admin;
 
 import com.pulsegate.model.RateLimitPolicy;
 import com.pulsegate.repository.RateLimitPolicyRepository;

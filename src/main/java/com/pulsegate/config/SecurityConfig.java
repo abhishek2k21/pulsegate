@@ -1,4 +1,4 @@
-﻿package com.pulsegate.config;
+package com.pulsegate.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

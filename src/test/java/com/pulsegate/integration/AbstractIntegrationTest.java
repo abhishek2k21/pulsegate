@@ -1,4 +1,4 @@
-﻿package com.pulsegate.integration;
+package com.pulsegate.integration;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;

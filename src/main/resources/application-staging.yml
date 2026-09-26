@@ -1,0 +1,47 @@
+﻿# ============================================================
+# Staging Profile — application-staging.yml
+# Mirrors production config. Uses environment variables.
+# ============================================================
+
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT:5432}/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    pool:
+      initial-size: 5
+      max-size: 15
+
+  flyway:
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT:5432}/${POSTGRES_DB}
+    user: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${JWT_JWKS_URI}
+
+pulsegate:
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT:6379}
+    command-timeout-ms: 500
+
+logging:
+  level:
+    com.pulsegate: INFO
+    org.springframework: WARN
+  pattern:
+    console: '{"timestamp":"%d{ISO8601}","level":"%level","logger":"%logger{30}","correlationId":"%X{correlationId}","message":"%msg"}%n'
+
+management:
+  endpoint:
+    health:
+      show-details: when-authorized
+
+pulsegate.cache.reload-interval-ms: 120000

@@ -1,4 +1,4 @@
-﻿package com.pulsegate.config;
+package com.pulsegate.config;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;

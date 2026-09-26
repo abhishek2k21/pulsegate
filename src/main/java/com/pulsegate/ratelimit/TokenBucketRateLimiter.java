@@ -1,4 +1,4 @@
-﻿package com.pulsegate.ratelimit;
+package com.pulsegate.ratelimit;
 
 import com.pulsegate.model.RateLimitPolicy;
 import com.pulsegate.repository.RateLimitPolicyRepository;
@@ -44,7 +44,7 @@ public class TokenBucketRateLimiter implements RateLimiter {
             .switchIfEmpty(Mono.error(new IllegalArgumentException("Rate limit policy not found: " + policyId)))
             .flatMap(policy -> executeScript(key, policy))
             .doOnNext(result -> recordMetrics(key, result))
-            .onErrorResume(ex -> {
+            .onErrorResume(ex -> !(ex instanceof IllegalArgumentException), ex -> {
                 // Fail-open: if Redis is unavailable, allow the request
                 log.warn("Rate limiter Redis error (fail-open): key={}, error={}", key, ex.getMessage());
                 return Mono.just(RateLimitResult.allowed(1, 1, System.currentTimeMillis(), ALGORITHM));

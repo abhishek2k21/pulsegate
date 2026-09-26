@@ -1,4 +1,4 @@
-﻿package com.pulsegate.websocket;
+package com.pulsegate.websocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pulsegate.circuitbreaker.CircuitBreakerRegistry;

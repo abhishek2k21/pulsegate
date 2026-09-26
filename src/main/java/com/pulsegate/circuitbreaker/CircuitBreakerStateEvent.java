@@ -1,4 +1,4 @@
-﻿package com.pulsegate.circuitbreaker;
+package com.pulsegate.circuitbreaker;
 
 import java.time.Instant;
 

@@ -1,4 +1,4 @@
-﻿package com.pulsegate.gateway.filter;
+package com.pulsegate.gateway.filter;
 
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
