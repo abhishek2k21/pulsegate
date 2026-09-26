@@ -1,0 +1,92 @@
+﻿spring:
+  application:
+    name: pulsegate
+
+  # R2DBC (reactive PostgreSQL)
+  r2dbc:
+    url: r2dbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:pulsegate}
+    username: ${POSTGRES_USER:pulsegate}
+    password: ${POSTGRES_PASSWORD:pulsegate}
+    pool:
+      initial-size: 5
+      max-size: 20
+      max-idle-time: 30m
+
+  # Flyway (uses JDBC for migrations)
+  flyway:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:pulsegate}
+    user: ${POSTGRES_USER:pulsegate}
+    password: ${POSTGRES_PASSWORD:pulsegate}
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  # Kafka
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: pulsegate-analytics
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+  # OAuth2 Resource Server (optional — leave empty for dev without IdP)
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${JWT_JWKS_URI:}
+
+  # Spring Cloud Gateway
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+
+# PulseGate custom config
+pulsegate:
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    command-timeout-ms: 500
+  cache:
+    reload-interval-ms: 300000    # 5 minutes periodic full reload
+
+# Actuator & Prometheus
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+# Logging
+logging:
+  level:
+    com.pulsegate: DEBUG
+    org.springframework.cloud.gateway: INFO
+  pattern:
+    console: "%d{HH:mm:ss} [%thread] [%X{correlationId:-}] %-5level %logger{36} - %msg%n"
+
+# Swagger / OpenAPI
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    try-it-out-enabled: true
+
+server:
+  port: 8080
