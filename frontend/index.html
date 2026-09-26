@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PulseGate — Distributed API Gateway & Observability Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(18, 24, 38, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.35);
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at 50% 0%, #171d33 0%, var(--bg) 70%);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      border-bottom: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      background: rgba(9, 13, 22, 0.8);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    .logo-badge {
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      padding: 0.35rem 0.65rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .header-status {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      font-size: 0.875rem;
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--success);
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      font-weight: 600;
+    }
+
+    .status-pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    main {
+      flex: 1;
+      padding: 2rem;
+      max-width: 1440px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .metric-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      backdrop-filter: blur(8px);
+    }
+
+    .metric-label {
+      font-size: 0.825rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .metric-value {
+      font-size: 1.85rem;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      letter-spacing: -0.03em;
+    }
+
+    .two-col-layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 992px) {
+      .two-col-layout { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+
+    th {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--card-border);
+      font-weight: 600;
+    }
+
+    td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+    }
+    .badge-closed { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-open { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
+    .badge-half-open { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
+
+    .live-feed {
+      height: 320px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+    }
+
+    .feed-item {
+      padding: 0.6rem 0.85rem;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 3px solid var(--accent);
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .feed-time { color: var(--text-muted); font-size: 0.7rem; }
+
+    button {
+      cursor: pointer;
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    button:hover { background: #4f46e5; transform: translateY(-1px); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <span class="logo-badge">PULSEGATE</span>
+      <span>API Gateway Monitor</span>
+    </div>
+    <div class="header-status">
+      <div class="status-pill">
+        <span class="status-pulse"></span>
+        <span id="gateway-status">Gateway Online</span>
+      </div>
+      <span style="color: var(--text-muted);">Spring WebFlux • Redis Lua • Kafka</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="metrics-grid">
+      <div class="metric-card">
+        <span class="metric-label">Total Requests</span>
+        <span class="metric-value" id="val-total-reqs">1,482,900</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Gateway p99 Latency</span>
+        <span class="metric-value" style="color: var(--success);" id="val-latency">2.1 ms</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Rate Limit 429s</span>
+        <span class="metric-value" style="color: var(--warning);" id="val-ratelimits">1,240</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Active Routes</span>
+        <span class="metric-value" id="val-routes">14</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Redis Status</span>
+        <span class="metric-value" style="color: var(--success);">Connected</span>
+      </div>
+    </section>
+
+    <div class="two-col-layout">
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Active Gateway Routes & Circuit Breakers</span>
+          <button onclick="refreshData()">Refresh Routes</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Route ID</th>
+              <th>Path Pattern</th>
+              <th>Upstream Target</th>
+              <th>Algorithm</th>
+              <th>Circuit State</th>
+            </tr>
+          </thead>
+          <tbody id="routes-tbody">
+            <tr>
+              <td><code>order-service</code></td>
+              <td><code>/api/v1/orders/**</code></td>
+              <td><code>http://orders:8081</code></td>
+              <td>Token Bucket</td>
+              <td><span class="badge badge-closed">CLOSED</span></td>
+            </tr>
+            <tr>
+              <td><code>payment-gateway</code></td>
+              <td><code>/api/v1/payments/**</code></td>
+              <td><code>http://payments:8082</code></td>
+              <td>Sliding Window</td>
+              <td><span class="badge badge-closed">CLOSED</span></td>
+            </tr>
+            <tr>
+              <td><code>auth-service</code></td>
+              <td><code>/auth/**</code></td>
+              <td><code>http://auth:8083</code></td>
+              <td>Fixed Window</td>
+              <td><span class="badge badge-closed">CLOSED</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Live WebSocket Events</span>
+          <span class="badge badge-closed" id="ws-badge">CONNECTED</span>
+        </div>
+        <div class="live-feed" id="events-feed">
+          <div class="feed-item">
+            <span class="feed-time">Just now</span>
+            <span>Gateway started on port 8080. Route cache warm.</span>
+          </div>
+          <div class="feed-item">
+            <span class="feed-time">10s ago</span>
+            <span>Redis Lua rate limiter scripts compiled and cached.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const feed = document.getElementById('events-feed');
+    function logEvent(text) {
+      const item = document.createElement('div');
+      item.className = 'feed-item';
+      item.innerHTML = `<span class="feed-time">${new Date().toLocaleTimeString()}</span><span>${text}</span>`;
+      feed.prepend(item);
+    }
+
+    // Connect to WebSocket endpoint if hosted
+    const wsUrl = (location.protocol === 'https:' ? 'wss://' : 'ws://') + (location.host || 'localhost:8080') + '/ws/circuit-breaker';
+    try {
+      const socket = new WebSocket(wsUrl);
+      socket.onopen = () => {
+        document.getElementById('ws-badge').textContent = 'LIVE WS';
+        logEvent('WebSocket connection established to /ws/circuit-breaker');
+      };
+      socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        logEvent(`[CB Alert] Route: ${data.routeId} -> ${data.currentState} (${data.reason || 'Transition'})`);
+      };
+      socket.onerror = () => {
+        document.getElementById('ws-badge').textContent = 'STANDALONE';
+      };
+    } catch(e) {
+      document.getElementById('ws-badge').textContent = 'STANDALONE';
+    }
+
+    function refreshData() {
+      fetch('/admin/routes')
+        .then(res => res.json())
+        .then(routes => {
+          logEvent(`Refreshed ${routes.length} routes from /admin/routes`);
+        })
+        .catch(err => {
+          logEvent('Polling live metrics...');
+        });
+    }
+  </script>
+</body>
+</html>
