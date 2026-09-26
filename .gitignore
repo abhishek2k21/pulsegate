@@ -1,0 +1,28 @@
+﻿# Maven
+target/
+*.class
+*.jar
+*.war
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.suo
+
+# Environment
+.env
+.env.local
+
+# Logs
+*.log
+logs/
+
+# Docker volumes (local dev)
+postgres-data/
+redis-data/
+grafana-data/
+
+# OS
+.DS_Store
+Thumbs.db
