@@ -1,4 +1,4 @@
-﻿# ============================================================
+# ============================================================
 # Development Profile — application-dev.yml
 # Active when: SPRING_PROFILES_ACTIVE=dev  OR  make run
 # Assumes: docker-deps running locally
@@ -38,9 +38,6 @@ management:
   endpoint:
     health:
       show-details: always
-
-# Dev-only: relax security — no JWT required for admin endpoints
-spring.security.oauth2.resourceserver.jwt.jwk-set-uri: ""
 
 # Dev: faster cache reload for immediate feedback
 pulsegate.cache.reload-interval-ms: 10000
