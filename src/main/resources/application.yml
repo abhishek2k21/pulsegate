@@ -1,4 +1,4 @@
-﻿spring:
+spring:
   application:
     name: pulsegate
 
@@ -27,14 +27,13 @@
       group-id: pulsegate-analytics
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  # Redis
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
 
-  # OAuth2 Resource Server (optional — leave empty for dev without IdP)
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          jwk-set-uri: ${JWT_JWKS_URI:}
+
 
   # Spring Cloud Gateway
   cloud:

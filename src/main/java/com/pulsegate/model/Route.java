@@ -39,7 +39,7 @@ public class Route {
     private String upstreamUrl;
 
     /** Ordered list of filter names to apply (e.g. ["auth","rate-limit","circuit-breaker"]). */
-    @Column("filters")
+    @Column("filters_json")
     private String filtersJson;   // stored as JSON string, deserialized on load
 
     /** Whether this route is currently active. Soft-disable without deletion. */
@@ -55,7 +55,7 @@ public class Route {
     private Long circuitBreakerConfigId;
 
     /** HTTP methods allowed; null means all methods. */
-    @Column("allowed_methods")
+    @Column("allowed_methods_json")
     private String allowedMethodsJson;
 
     /** Strip prefix segments before forwarding. e.g. strip /api gives /orders to upstream */
