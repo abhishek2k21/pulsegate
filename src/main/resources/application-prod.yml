@@ -1,13 +1,13 @@
-﻿# ============================================================
+# ============================================================
 # Production Profile — application-prod.yml
 # All secrets via environment variables. No hardcoded values.
 # ============================================================
 
 spring:
   r2dbc:
-    url: r2dbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT:5432}/${POSTGRES_DB}
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
+    url: r2dbc:postgresql://${POSTGRES_HOST:${PGHOST}}:${POSTGRES_PORT:${PGPORT:5432}}/${POSTGRES_DB:${PGDATABASE}}
+    username: ${POSTGRES_USER:${PGUSER}}
+    password: ${POSTGRES_PASSWORD:${PGPASSWORD}}
     pool:
       initial-size: 10
       max-size: 30
@@ -15,15 +15,15 @@ spring:
       validation-query: SELECT 1
 
   flyway:
-    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT:5432}/${POSTGRES_DB}
-    user: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
+    url: jdbc:postgresql://${POSTGRES_HOST:${PGHOST}}:${POSTGRES_PORT:${PGPORT:5432}}/${POSTGRES_DB:${PGDATABASE}}
+    user: ${POSTGRES_USER:${PGUSER}}
+    password: ${POSTGRES_PASSWORD:${PGPASSWORD}}
     # Production: validate-on-migrate to catch schema drift early
     validate-on-migrate: true
     out-of-order: false
 
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     producer:
       acks: all            # Wait for all replicas to acknowledge (durability)
       retries: 5
@@ -35,12 +35,13 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: ${JWT_JWKS_URI}
+          jwk-set-uri: ${JWT_JWKS_URI:}
 
 pulsegate:
   redis:
-    host: ${REDIS_HOST}
-    port: ${REDIS_PORT:6379}
+    host: ${REDIS_HOST:${REDISHOST}}
+    port: ${REDIS_PORT:${REDISPORT:6379}}
+    password: ${REDIS_PASSWORD:${REDISPASSWORD:}}
     command-timeout-ms: 300
 
 logging:
@@ -61,7 +62,7 @@ management:
         include: health,prometheus   # Minimal exposure in prod
 
 server:
-  port: 8080
+  port: ${PORT:8080}
   # Production: graceful shutdown
   shutdown: graceful
 

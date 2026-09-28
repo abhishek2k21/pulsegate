@@ -28,11 +28,14 @@ import java.time.Duration;
 @Configuration
 public class RedisConfig {
 
-    @Value("${pulsegate.redis.host:localhost}")
+    @Value("${pulsegate.redis.host:${REDIS_HOST:${REDISHOST:localhost}}}")
     private String redisHost;
 
-    @Value("${pulsegate.redis.port:6379}")
+    @Value("${pulsegate.redis.port:${REDIS_PORT:${REDISPORT:6379}}}")
     private int redisPort;
+
+    @Value("${pulsegate.redis.password:${REDIS_PASSWORD:${REDISPASSWORD:}}}")
+    private String redisPassword;
 
     @Value("${pulsegate.redis.command-timeout-ms:500}")
     private long commandTimeoutMs;
@@ -41,6 +44,9 @@ public class RedisConfig {
     @Primary
     public ReactiveRedisConnectionFactory reactiveRedisConnectionFactory() {
         RedisStandaloneConfiguration serverConfig = new RedisStandaloneConfiguration(redisHost, redisPort);
+        if (redisPassword != null && !redisPassword.isBlank()) {
+            serverConfig.setPassword(redisPassword.trim());
+        }
 
         ClientOptions clientOptions = ClientOptions.builder()
             .autoReconnect(true)

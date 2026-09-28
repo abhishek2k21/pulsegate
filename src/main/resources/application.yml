@@ -4,9 +4,9 @@ spring:
 
   # R2DBC (reactive PostgreSQL)
   r2dbc:
-    url: r2dbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:pulsegate}
-    username: ${POSTGRES_USER:pulsegate}
-    password: ${POSTGRES_PASSWORD:pulsegate}
+    url: r2dbc:postgresql://${POSTGRES_HOST:${PGHOST:localhost}}:${POSTGRES_PORT:${PGPORT:5432}}/${POSTGRES_DB:${PGDATABASE:pulsegate}}
+    username: ${POSTGRES_USER:${PGUSER:pulsegate}}
+    password: ${POSTGRES_PASSWORD:${PGPASSWORD:pulsegate}}
     pool:
       initial-size: 5
       max-size: 20
@@ -14,9 +14,9 @@ spring:
 
   # Flyway (uses JDBC for migrations)
   flyway:
-    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:pulsegate}
-    user: ${POSTGRES_USER:pulsegate}
-    password: ${POSTGRES_PASSWORD:pulsegate}
+    url: jdbc:postgresql://${POSTGRES_HOST:${PGHOST:localhost}}:${POSTGRES_PORT:${PGPORT:5432}}/${POSTGRES_DB:${PGDATABASE:pulsegate}}
+    user: ${POSTGRES_USER:${PGUSER:pulsegate}}
+    password: ${POSTGRES_PASSWORD:${PGPASSWORD:pulsegate}}
     locations: classpath:db/migration
     baseline-on-migrate: true
 
@@ -30,8 +30,9 @@ spring:
   # Redis
   data:
     redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
+      host: ${REDIS_HOST:${REDISHOST:localhost}}
+      port: ${REDIS_PORT:${REDISPORT:6379}}
+      password: ${REDIS_PASSWORD:${REDISPASSWORD:}}
 
 
 
@@ -88,4 +89,4 @@ springdoc:
     try-it-out-enabled: true
 
 server:
-  port: 8080
+  port: ${PORT:8080}
