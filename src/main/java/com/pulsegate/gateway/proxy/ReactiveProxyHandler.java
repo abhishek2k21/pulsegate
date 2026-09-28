@@ -76,7 +76,7 @@ public class ReactiveProxyHandler {
         });
     }
 
-    private URI buildTargetUri(ServerHttpRequest request, Route route) {
+    URI buildTargetUri(ServerHttpRequest request, Route route) {
         String path = request.getPath().value();
         int stripPrefixCount = route.getStripPrefix();
         if (stripPrefixCount > 0) {
@@ -93,12 +93,20 @@ public class ReactiveProxyHandler {
             }
         }
 
+        String base = route.getUpstreamUrl() != null ? route.getUpstreamUrl().trim() : "";
+        if (base.endsWith("/")) {
+            base = base.substring(0, base.length() - 1);
+        }
+        if (!path.startsWith("/")) {
+            path = "/" + path;
+        }
+
         String query = request.getURI().getRawQuery();
-        String uriString = route.getUpstreamUrl() + path + (query != null ? "?" + query : "");
+        String uriString = base + path + (query != null ? "?" + query : "");
         return URI.create(uriString);
     }
 
-    private void copyHeaders(HttpHeaders source, HttpHeaders target) {
+    void copyHeaders(HttpHeaders source, HttpHeaders target) {
         source.forEach((name, values) -> {
             if (!HttpHeaders.HOST.equalsIgnoreCase(name) && !HttpHeaders.CONTENT_LENGTH.equalsIgnoreCase(name)) {
                 target.addAll(name, values);

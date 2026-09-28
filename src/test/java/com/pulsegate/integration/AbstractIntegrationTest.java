@@ -58,6 +58,8 @@ public abstract class AbstractIntegrationTest {
         // Redis
         registry.add("pulsegate.redis.host", redis::getHost);
         registry.add("pulsegate.redis.port",  () -> redis.getMappedPort(6379).toString());
+        registry.add("spring.data.redis.host", redis::getHost);
+        registry.add("spring.data.redis.port", () -> redis.getMappedPort(6379).toString());
 
         // Kafka
         registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);

@@ -1,5 +1,6 @@
 package com.pulsegate.admin;
 
+import com.pulsegate.exception.RouteNotFoundException;
 import com.pulsegate.gateway.router.RouteCache;
 import com.pulsegate.model.Route;
 import com.pulsegate.repository.RouteRepository;
@@ -116,9 +117,5 @@ public class RouteAdminController {
     private Mono<Long> publishInvalidation(String routeId) {
         return redisTemplate.convertAndSend(INVALIDATION_CHANNEL, routeId)
             .doOnNext(count -> log.debug("Invalidation published for route {}, received by {} nodes", routeId, count));
-    }
-
-    static class RouteNotFoundException extends RuntimeException {
-        RouteNotFoundException(String id) { super("Route not found: " + id); }
     }
 }

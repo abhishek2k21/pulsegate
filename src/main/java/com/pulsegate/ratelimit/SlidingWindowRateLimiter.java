@@ -43,7 +43,7 @@ public class SlidingWindowRateLimiter implements RateLimiter {
             .switchIfEmpty(Mono.error(new IllegalArgumentException("Rate limit policy not found: " + policyId)))
             .flatMap(policy -> executeScript(key, policy))
             .doOnNext(result -> recordMetrics(key, result))
-            .onErrorResume(ex -> {
+            .onErrorResume(ex -> !(ex instanceof IllegalArgumentException), ex -> {
                 log.warn("SlidingWindow Redis error (fail-open): {}", ex.getMessage());
                 return Mono.just(RateLimitResult.allowed(1, 1, System.currentTimeMillis(), ALGORITHM));
             });
